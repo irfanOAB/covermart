@@ -2,10 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/cart": "pages/cart.js",
   "/": "pages/index.js",
-  "/login": "pages/login.js",
-  "/products": "pages/products.js",
-  "/products/[id]": "pages/products/[id].js",
-  "/register": "pages/register.js",
-  "/cart": "pages/cart.js"
+  "/products": "pages/products.js"
 }

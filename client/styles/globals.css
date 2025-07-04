@@ -1,0 +1,115 @@
+/* Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+/* Global styles */
+:root {
+  --primary-color: #0a0a0a;
+  --primary-dark: #050505;
+  --primary-light: #1a1a1a;
+  --accent-color: #6366f1;
+  --accent-dark: #4f46e5;
+  --accent-light: #818cf8;
+  --black: #030303;
+  --white: #ffffff;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --success-color: #22c55e;
+  --error-color: #ef4444;
+}
+
+/* Base styles */
+@layer base {
+  body {
+    @apply bg-black text-white font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+/* Custom Component Classes */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-accent-600 text-white hover:bg-accent-700 focus:ring-accent-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-dark-100 text-white hover:bg-dark-200 border border-dark-100 hover:border-accent-500 focus:ring-accent-500;
+  }
+  
+  .btn-outline {
+    @apply border border-white/20 bg-transparent text-white hover:bg-white/10 focus:ring-white;
+  }
+  
+  .form-input {
+    @apply block w-full px-4 py-3 bg-dark-100 border border-dark-200 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent;
+  }
+  
+  .card {
+    @apply bg-dark-200 rounded-xl overflow-hidden border border-dark-100 backdrop-blur-sm;
+  }
+  
+  .glass-card {
+    @apply bg-dark-300/80 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+  
+  .section {
+    @apply py-16 md:py-24;
+  }
+  
+  .container-custom {
+    @apply container mx-auto px-4 md:px-8;
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-400 to-accent-600;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+}

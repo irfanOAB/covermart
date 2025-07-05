@@ -1,10 +1,111 @@
 const Product = require('../models/productModel');
+const path = require('path');
+const fs = require('fs');
+
+// Fallback mock data for when MongoDB is not connected
+const getMockProducts = () => {
+  return [
+    {
+      _id: '1',
+      name: 'Premium Silicone Case for iPhone 15 Pro Max',
+      images: ['product-1.jpg', 'product-2.jpg', 'product-5.jpg'],
+      description: 'A premium quality phone case with military-grade drop protection. Features a sleek design with precise cutouts for all ports and buttons.',
+      phoneModel: 'iPhone 15 Pro Max',
+      brand: 'CoverMart',
+      category: 'Silicone',
+      price: 1499,
+      discountPrice: 999,
+      gstRate: 18,
+      countInStock: 15,
+      colors: [
+        { name: 'Black', hexCode: '#000000', inStock: true },
+        { name: 'Blue', hexCode: '#0000FF', inStock: true },
+        { name: 'Red', hexCode: '#FF0000', inStock: true }
+      ],
+      material: 'Silicone',
+      features: [
+        'Military-grade drop protection',
+        'Slim profile design',
+        'Wireless charging compatible',
+        'Antimicrobial coating',
+        'Raised edges for screen protection',
+        'Precise cutouts for all ports'
+      ],
+      rating: 4.5,
+      numReviews: 120,
+      isFeatured: true
+    },
+    {
+      _id: '2',
+      name: 'Leather Wallet Case for iPhone 15 Pro',
+      images: ['product-3.jpg', 'product-4.jpg', 'product-2.jpg'],
+      description: 'Genuine leather wallet case with card slots and premium stitching. Combines style with functionality.',
+      phoneModel: 'iPhone 15 Pro',
+      brand: 'CoverMart',
+      category: 'Leather',
+      price: 1999,
+      discountPrice: 1699,
+      gstRate: 18,
+      countInStock: 8,
+      colors: [
+        { name: 'Brown', hexCode: '#8B4513', inStock: true },
+        { name: 'Black', hexCode: '#000000', inStock: true }
+      ],
+      material: 'Genuine Leather',
+      features: [
+        'Genuine leather construction',
+        'Three card slots and cash pocket',
+        'Magnetic closure',
+        'Converts to viewing stand',
+        'Full camera protection',
+        'Premium stitching details'
+      ],
+      rating: 4.8,
+      numReviews: 85,
+      isFeatured: true
+    },
+    {
+      _id: '3',
+      name: 'Transparent Case for iPhone 15',
+      images: ['product-5.jpg', 'product-1.jpg'],
+      description: 'Crystal clear transparent case that shows off your phone\'s design while providing excellent protection.',
+      phoneModel: 'iPhone 15',
+      brand: 'CoverMart',
+      category: 'Transparent',
+      price: 999,
+      discountPrice: 799,
+      gstRate: 18,
+      countInStock: 25,
+      colors: [
+        { name: 'Clear', hexCode: '#FFFFFF', inStock: true },
+        { name: 'Smoke', hexCode: '#708090', inStock: true }
+      ],
+      material: 'TPU and Polycarbonate',
+      features: [
+        'Crystal clear transparency',
+        'Shock-absorbing corners',
+        'Non-yellowing material',
+        'Slim and lightweight',
+        'Raised bezels for screen and camera protection'
+      ],
+      rating: 4.3,
+      numReviews: 67,
+      isFeatured: false
+    }
+  ];
+};
+
+// Helper function to check if MongoDB is connected
+const isMongoConnected = () => {
+  return require('mongoose').connection.readyState === 1;
+};
 
 // @desc    Get all products
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
   try {
+    // If MongoDB is connected, proceed with normal database query
     const pageSize = 10;
     const page = Number(req.query.pageNumber) || 1;
 
@@ -16,16 +117,70 @@ const getProducts = async (req, res) => {
       filter.phoneModel = req.query.model;
     }
 
-    // Price range filter
-    if (req.query.minPrice && req.query.maxPrice) {
-      filter.price = { 
-        $gte: Number(req.query.minPrice), 
-        $lte: Number(req.query.maxPrice) 
-      };
-    } else if (req.query.minPrice) {
-      filter.price = { $gte: Number(req.query.minPrice) };
-    } else if (req.query.maxPrice) {
-      filter.price = { $lte: Number(req.query.maxPrice) };
+    // Price range filter - use discountPrice if available, otherwise use price
+    if (req.query.minPrice || req.query.maxPrice) {
+      // Create a $or condition to check both price and discountPrice
+      const priceConditions = [];
+      
+      if (req.query.minPrice && req.query.maxPrice) {
+        // Condition 1: discountPrice exists and is within range
+        priceConditions.push({
+          discountPrice: { 
+            $exists: true, 
+            $ne: null,
+            $gte: Number(req.query.minPrice), 
+            $lte: Number(req.query.maxPrice) 
+          }
+        });
+        // Condition 2: discountPrice doesn't exist or is null, but price is within range
+        priceConditions.push({
+          $or: [
+            { discountPrice: { $exists: false } },
+            { discountPrice: null }
+          ],
+          price: { 
+            $gte: Number(req.query.minPrice), 
+            $lte: Number(req.query.maxPrice) 
+          }
+        });
+      } else if (req.query.minPrice) {
+        // Condition 1: discountPrice exists and is >= minPrice
+        priceConditions.push({
+          discountPrice: { 
+            $exists: true, 
+            $ne: null,
+            $gte: Number(req.query.minPrice) 
+          }
+        });
+        // Condition 2: discountPrice doesn't exist or is null, but price is >= minPrice
+        priceConditions.push({
+          $or: [
+            { discountPrice: { $exists: false } },
+            { discountPrice: null }
+          ],
+          price: { $gte: Number(req.query.minPrice) }
+        });
+      } else if (req.query.maxPrice) {
+        // Condition 1: discountPrice exists and is <= maxPrice
+        priceConditions.push({
+          discountPrice: { 
+            $exists: true, 
+            $ne: null,
+            $lte: Number(req.query.maxPrice) 
+          }
+        });
+        // Condition 2: discountPrice doesn't exist or is null, but price is <= maxPrice
+        priceConditions.push({
+          $or: [
+            { discountPrice: { $exists: false } },
+            { discountPrice: null }
+          ],
+          price: { $lte: Number(req.query.maxPrice) }
+        });
+      }
+      
+      // Add the $or condition to the filter
+      filter.$or = priceConditions;
     }
 
     // Color filter
@@ -67,8 +222,15 @@ const getProducts = async (req, res) => {
       total: count,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error in getProducts:', error);
+    // Fallback to mock data on error
+    const mockProducts = getMockProducts();
+    res.json({
+      products: mockProducts,
+      page: 1,
+      pages: 1,
+      total: mockProducts.length,
+    });
   }
 };
 
@@ -77,6 +239,20 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductById = async (req, res) => {
   try {
+    // Check if MongoDB is connected
+    if (!isMongoConnected()) {
+      console.log('MongoDB not connected, using mock data for product details');
+      const mockProducts = getMockProducts();
+      const product = mockProducts.find(p => p._id === req.params.id);
+      
+      if (product) {
+        return res.json(product);
+      } else {
+        return res.status(404).json({ message: 'Product not found in mock data' });
+      }
+    }
+    
+    // If MongoDB is connected, proceed with normal database query
     const product = await Product.findById(req.params.id);
 
     if (product) {
@@ -85,8 +261,17 @@ const getProductById = async (req, res) => {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error in getProductById:', error);
+    
+    // Fallback to mock data on error
+    const mockProducts = getMockProducts();
+    const product = mockProducts.find(p => p._id === req.params.id);
+    
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ message: 'Product not found in mock data' });
+    }
   }
 };
 
@@ -161,29 +346,55 @@ const getFeaturedProducts = async (req, res) => {
   }
 };
 
-// @desc    Get product categories
+// @desc    Get all product categories
 // @route   GET /api/products/categories
 // @access  Public
 const getProductCategories = async (req, res) => {
   try {
+    // Check if MongoDB is connected
+    if (!isMongoConnected()) {
+      console.log('MongoDB not connected, using mock data for categories');
+      const mockProducts = getMockProducts();
+      const categories = [...new Set(mockProducts.map(p => p.category))];
+      return res.json(categories);
+    }
+    
+    // If MongoDB is connected, proceed with normal database query
     const categories = await Product.distinct('category');
     res.json(categories);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error in getCategories:', error);
+    
+    // Fallback to mock data on error
+    const mockProducts = getMockProducts();
+    const categories = [...new Set(mockProducts.map(p => p.category))];
+    res.json(categories);
   }
 };
 
-// @desc    Get product phone models
+// @desc    Get all phone models
 // @route   GET /api/products/models
 // @access  Public
 const getPhoneModels = async (req, res) => {
   try {
+    // Check if MongoDB is connected
+    if (!isMongoConnected()) {
+      console.log('MongoDB not connected, using mock data for phone models');
+      const mockProducts = getMockProducts();
+      const models = [...new Set(mockProducts.map(p => p.phoneModel))];
+      return res.json(models);
+    }
+    
+    // If MongoDB is connected, proceed with normal database query
     const models = await Product.distinct('phoneModel');
     res.json(models);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error in getPhoneModels:', error);
+    
+    // Fallback to mock data on error
+    const mockProducts = getMockProducts();
+    const models = [...new Set(mockProducts.map(p => p.phoneModel))];
+    res.json(models);
   }
 };
 

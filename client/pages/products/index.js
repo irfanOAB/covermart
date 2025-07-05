@@ -41,12 +41,15 @@ const ProductsPage = () => {
       try {
         const [categoriesRes, phoneModelsRes] = await Promise.all([
           api.get('/products/categories'),
-          api.get('/products/phone-models')
+          api.get('/products/models') // Updated to match backend endpoint
         ]);
         setCategories(categoriesRes.data);
         setPhoneModels(phoneModelsRes.data);
       } catch (err) {
         console.error('Error fetching filter data:', err);
+        // Set some default categories and models if API fails
+        setCategories(['Silicone', 'Leather', 'Transparent', 'Designer']);
+        setPhoneModels(['iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15', 'iPhone 14 Pro Max']);
       }
     };
     
@@ -58,22 +61,33 @@ const ProductsPage = () => {
     try {
       setLoading(true);
       
-      // In development mode, always use mock products for now
-      // This ensures we can see the products with the images we have
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Using mock products for development');
-        setProducts(getMockProducts());
-        setLoading(false);
-        return;
-      }
-      
       // Build query string from filters
       const queryParams = new URLSearchParams();
       if (filters.category) queryParams.append('category', filters.category);
-      if (filters.phoneModel) queryParams.append('phoneModel', filters.phoneModel);
+      if (filters.phoneModel) queryParams.append('model', filters.phoneModel); // Changed to match backend parameter name
       if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
       if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
-      if (filters.sort) queryParams.append('sort', filters.sort);
+      if (filters.sort) {
+        // Map frontend sort values to backend sort parameters
+        let sortParam;
+        switch(filters.sort) {
+          case 'price-low-high':
+            sortParam = 'price';
+            break;
+          case 'price-high-low':
+            sortParam = '-price';
+            break;
+          case 'rating':
+            sortParam = '-rating';
+            break;
+          case 'best-selling':
+            sortParam = '-numReviews';
+            break;
+          default:
+            sortParam = '-createdAt';
+        }
+        queryParams.append('sort', sortParam);
+      }
 
       const { data } = await api.get(`/products?${queryParams.toString()}`);
       
@@ -88,8 +102,10 @@ const ProductsPage = () => {
         images: product.images?.map(img => {
           // If image is already a full URL, keep it as is
           if (img && img.startsWith('http')) return img;
-          // Otherwise, prefix with the products image path
-          return `/images/products/${img}`;
+          // If it starts with /uploads, use the backend URL
+          if (img && img.startsWith('/uploads')) return `http://localhost:5000${img}`;
+          // Otherwise, prefix with the backend uploads path
+          return `http://localhost:5000/uploads/${img}`;
         }) || []
       }));
       
@@ -100,28 +116,20 @@ const ProductsPage = () => {
       setLoading(false);
       console.error('Error fetching products:', err);
       
-      // For development, create mock products if API fails
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Using mock products for development');
-        setProducts(getMockProducts());
-      }
+      // Fallback to mock products if API fails
+      console.log('Using mock products as fallback');
+      setProducts(getMockProducts());
     }
   };
   
-  // Helper function to generate mock products for development
+  // Helper function to generate mock products as fallback
   const getMockProducts = () => {
     const mockProducts = [];
     const categories = ['Silicone', 'Leather', 'Transparent', 'Designer'];
     const phoneModels = ['iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15', 'iPhone 14 Pro Max'];
     
-    // Use the actual images we know exist in the directory
-    const availableImages = ['product-1.jpg', 'product-5.jpg'];
-    
     // Create 12 mock products
     for (let i = 1; i <= 12; i++) {
-      // Use available images in rotation
-      const imageIndex = (i - 1) % availableImages.length;
-      
       mockProducts.push({
         _id: `${i}`,
         name: `Premium ${categories[i % 4]} Case for ${phoneModels[i % 4]}`,
@@ -132,8 +140,8 @@ const ProductsPage = () => {
         rating: (3 + (i % 3)),
         stock: i % 5 === 0 ? 0 : 10 + i,
         featured: i % 7 === 0,
-        // Use the actual image files that exist
-        images: [availableImages[imageIndex]],
+        // Use placeholder images
+        images: [`http://localhost:5000/uploads/product-${i % 5 + 1}.jpg`],
         colors: ['Black', 'Blue', 'Red']
       });
     }

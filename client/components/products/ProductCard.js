@@ -21,10 +21,10 @@ const ProductCard = ({ product }) => {
     if (!imageUrl) return null;
     // If it's already an absolute URL (starts with http or https), use it as is
     if (imageUrl.startsWith('http')) return imageUrl;
-    // If it's a relative path without leading slash, add it
-    if (!imageUrl.startsWith('/')) return `/images/products/${imageUrl}`;
-    // Otherwise, use as is (it's already a proper path like /images/products/...)
-    return imageUrl;
+    // If it starts with /uploads, use the backend URL
+    if (imageUrl.startsWith('/uploads')) return `http://localhost:5000${imageUrl}`;
+    // Otherwise, prefix with the backend uploads path
+    return `http://localhost:5000/uploads/${imageUrl}`;
   };
 
   // Calculate discount percentage if both price and discountPrice exist

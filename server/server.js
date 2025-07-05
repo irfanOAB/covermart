@@ -46,7 +46,13 @@ mongoose
   })
   .catch((err) => {
     console.error(`Error connecting to MongoDB: ${err.message}`);
+    console.log('Server will continue to run with limited functionality.');
   });
+
+// Handle MongoDB connection errors after initial connection
+mongoose.connection.on('error', (err) => {
+  console.error(`MongoDB connection error: ${err.message}`);
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;

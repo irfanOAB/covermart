@@ -20,9 +20,9 @@ const ProductDetailPage = () => {
   const [addingToCart, setAddingToCart] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   
-  // Helper function to generate mock product data for development
+  // Helper function to generate mock product data as fallback
   const getMockProduct = (id) => {
-    // Define a set of mock products with different images
+    // Define a set of mock products with backend URLs for images
     const mockProducts = [
       {
         _id: '1',
@@ -36,9 +36,9 @@ const ProductDetailPage = () => {
         phoneModel: 'iPhone 15 Pro Max',
         description: 'A premium quality phone case with military-grade drop protection. Features a sleek design with precise cutouts for all ports and buttons.',
         images: [
-          '/images/products/product-1.jpg',
-          '/images/products/product-2.jpg',
-          '/images/products/product-5.jpg'
+          'http://localhost:5000/uploads/product-1.jpg',
+          'http://localhost:5000/uploads/product-2.jpg',
+          'http://localhost:5000/uploads/product-5.jpg'
         ],
         isNew: true,
         isBestSeller: true,
@@ -70,9 +70,9 @@ const ProductDetailPage = () => {
         phoneModel: 'iPhone 15 Pro',
         description: 'Genuine leather wallet case with card slots and premium stitching. Combines style with functionality.',
         images: [
-          '/images/products/product-3.jpg',
-          '/images/products/product-4.jpg',
-          '/images/products/product-6.jpg'
+          'http://localhost:5000/uploads/product-3.jpg',
+          'http://localhost:5000/uploads/product-4.jpg',
+          'http://localhost:5000/uploads/product-6.jpg'
         ],
         isNew: false,
         isBestSeller: true,
@@ -108,14 +108,11 @@ const ProductDetailPage = () => {
     // If it's already an absolute URL (starts with http or https), use it as is
     if (imageUrl.startsWith('http')) return imageUrl;
     
-    // If it's a relative path that already starts with /images, use it as is
-    if (imageUrl.startsWith('/images')) return imageUrl;
+    // If it starts with /uploads, use the backend URL
+    if (imageUrl.startsWith('/uploads')) return `http://localhost:5000${imageUrl}`;
     
-    // If it's a relative path without leading slash, add /images/products/ prefix
-    if (!imageUrl.startsWith('/')) return `/images/products/${imageUrl}`;
-    
-    // Otherwise, ensure it has the correct prefix
-    return imageUrl.startsWith('/products/') ? `/images${imageUrl}` : imageUrl;
+    // Otherwise, prefix with the backend uploads path
+    return `http://localhost:5000/uploads/${imageUrl}`;
   };
 
   // Fetch product data
@@ -125,19 +122,7 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        // In development, use mock data
-        if (process.env.NODE_ENV === 'development') {
-          const mockProduct = getMockProduct(id);
-          // Process image URLs
-          if (mockProduct.images) {
-            mockProduct.images = mockProduct.images.map(img => processImageUrl(img));
-          }
-          setProduct(mockProduct);
-          setError(null);
-          return;
-        }
-        
-        // In production, fetch from API
+        // Fetch from backend API
         const response = await api.get(`/products/${id}`);
         const productData = response.data;
         

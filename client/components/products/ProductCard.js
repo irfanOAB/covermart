@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useCart } from '../../utils/CartContext';
 import { motion } from 'framer-motion';
 import OptimizedImage from '../ui/OptimizedImage';
+import { API_BASE_URL } from '../../utils/constants';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
@@ -22,9 +23,9 @@ const ProductCard = ({ product }) => {
     // If it's already an absolute URL (starts with http or https), use it as is
     if (imageUrl.startsWith('http')) return imageUrl;
     // If it starts with /uploads, use the backend URL
-    if (imageUrl.startsWith('/uploads')) return `http://localhost:5000${imageUrl}`;
+    if (imageUrl.startsWith('/uploads')) return `${API_BASE_URL.replace('/api', '')}${imageUrl}`;
     // Otherwise, prefix with the backend uploads path
-    return `http://localhost:5000/uploads/${imageUrl}`;
+    return `${API_BASE_URL.replace('/api', '')}/uploads/${imageUrl}`;
   };
 
   // Calculate discount percentage if both price and discountPrice exist

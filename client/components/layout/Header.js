@@ -55,33 +55,41 @@ const Header = () => {
   }, [isUserMenuOpen, isMenuOpen]);
 
   return (
-    <header className="bg-dark-300/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+    <header className="bg-white backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
               <span className="text-2xl font-display font-bold">
-                <span className="text-white">Cover</span>
-                <span className="gradient-text">Mart</span>
+                <span className="text-black">Cover</span>
+                <span className="text-gray-600">Mart</span>
               </span>
             </Link>
           </div>
 
           {/* Navigation - Desktop */}
           <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-white/80 hover:text-accent-400 transition-colors duration-300">
+            <Link href="/" className="text-gray-600 hover:text-black transition-colors duration-300">
               Home
             </Link>
-            <Link href="/products" className="text-white/80 hover:text-accent-400 transition-colors duration-300">
-              All Covers
+            <Link href="/products" className="text-gray-600 hover:text-black transition-colors duration-300">
+              All Cases
             </Link>
-            <Link href="/products?category=new" className="text-white/80 hover:text-accent-400 transition-colors duration-300">
+            <Link href="/products?category=new" className="text-gray-600 hover:text-black transition-colors duration-300">
               New Arrivals
             </Link>
-            <Link href="/products?category=trending" className="text-white/80 hover:text-accent-400 transition-colors duration-300">
+            <Link href="/products?category=trending" className="text-gray-600 hover:text-black transition-colors duration-300">
               Trending
             </Link>
+            {/* Language Toggle */}
+            <button 
+              onClick={toggleLanguage} 
+              className="p-2 text-gray-600 hover:text-black transition-colors duration-300"
+              aria-label="Toggle Language"
+            >
+              {language === 'en' ? 'हिन्दी' : 'English'}
+            </button>
           </nav>
 
           {/* Search, Cart, User - Desktop */}
@@ -90,10 +98,10 @@ const Header = () => {
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"
-                placeholder={language === 'en' ? "Search covers..." : "कवर खोजें..."}
+                placeholder={language === 'en' ? "Search cases..." : "केस खोजें..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-4 pr-10 py-2 bg-dark-100 border border-dark-200 rounded-full text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                className="pl-4 pr-10 py-2 bg-gray-100 border border-gray-300 rounded-full text-sm text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
               />
               <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -102,23 +110,13 @@ const Header = () => {
               </button>
             </form>
 
-            {/* Language Toggle */}
-            <motion.button 
-              onClick={toggleLanguage} 
-              className="px-3 py-1 rounded-full border border-white/10 text-white/80 hover:border-accent-500 hover:text-accent-400 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {language === 'en' ? 'हिन्दी' : 'English'}
-            </motion.button>
-
             {/* Cart */}
-            <Link href="/cart" className="relative p-2 rounded-full border border-white/10 hover:border-accent-500 hover:bg-dark-100 transition-colors">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <Link href="/cart" className="relative p-2 rounded-full border border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-black transform translate-x-1/2 -translate-y-1/2 bg-white rounded-full">
                   {cartCount}
                 </span>
               )}
@@ -126,59 +124,58 @@ const Header = () => {
 
             {/* User Menu */}
             <div className="relative user-menu-container">
-              <motion.button 
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} 
-                className="p-2 rounded-full border border-white/10 hover:border-accent-500 hover:bg-dark-100 transition-colors focus:outline-none"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button 
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="p-2 text-gray-600 hover:text-black transition-colors duration-300 flex items-center"
+                aria-label="User Menu"
               >
                 {user ? (
-                  <span className="w-8 h-8 rounded-full bg-accent-600 text-white flex items-center justify-center font-medium">
+                  <span className="w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-medium">
                     {user.name?.charAt(0) || 'U'}
                   </span>
                 ) : (
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
                 )}
-              </motion.button>
+              </button>
 
               {/* Dropdown menu */}
               <AnimatePresence>
                 {isUserMenuOpen && (
                   <motion.div 
-                    className="absolute right-0 mt-2 w-48 bg-dark-200 border border-white/10 rounded-md shadow-xl py-1 z-50 overflow-hidden"
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
                   >
                     {isAuthenticated ? (
                       <>
-                        <Link href="/account" className="block px-4 py-2 text-sm text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                        <Link href="/account" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black">
                           My Account
                         </Link>
-                        <Link href="/orders" className="block px-4 py-2 text-sm text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                        <Link href="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black">
                           My Orders
                         </Link>
                         {isAdmin && (
-                          <Link href="/admin" className="block px-4 py-2 text-sm text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                          <Link href="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black">
                             Admin Panel
                           </Link>
                         )}
                         <button 
                           onClick={handleLogout} 
-                          className="block w-full text-left px-4 py-2 text-sm text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors"
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black"
                         >
                           Logout
                         </button>
                       </>
                     ) : (
                       <>
-                        <Link href="/login" className="block px-4 py-2 text-sm text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                        <Link href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black">
                           Login
                         </Link>
-                        <Link href="/register" className="block px-4 py-2 text-sm text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                        <Link href="/register" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black">
                           Register
                         </Link>
                       </>
@@ -192,12 +189,12 @@ const Header = () => {
           {/* Mobile Menu Button and Cart */}
           <div className="flex items-center space-x-4 md:hidden">
             {/* Mobile Cart Link */}
-            <Link href="/cart" className="relative p-2 rounded-full border border-white/10 hover:border-accent-500 transition-colors">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <Link href="/cart" className="relative p-2 rounded-full border border-gray-200 hover:border-gray-400 transition-colors">
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                <span className="absolute -top-1 -right-1 bg-gray-800 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                   {cartCount}
                 </span>
               )}
@@ -252,7 +249,7 @@ const Header = () => {
         <AnimatePresence>
           {isMobileSearch && (
             <motion.div 
-              className="md:hidden py-3"
+              className="md:hidden py-3 bg-white"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -264,7 +261,7 @@ const Header = () => {
                   placeholder={language === 'en' ? "Search covers..." : "कवर खोजें..."}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-4 pr-10 py-2 bg-dark-100 border border-dark-200 rounded-full text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full pl-4 pr-10 py-2 bg-gray-100 border border-gray-300 rounded-full text-sm text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 />
                 <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2">
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -280,59 +277,59 @@ const Header = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div 
-              className="md:hidden bg-dark-300 border-t border-white/10"
+              className="md:hidden bg-white border-t border-gray-200"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
               <div className="px-4 py-3 space-y-2">
-                <Link href="/" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                <Link href="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                   Home
                 </Link>
-                <Link href="/products" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                <Link href="/products" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                   All Covers
                 </Link>
-                <Link href="/products?category=new" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                <Link href="/products?category=new" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                   New Arrivals
                 </Link>
-                <Link href="/products?category=trending" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                <Link href="/products?category=trending" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                   Trending
                 </Link>
                 
-                <div className="pt-4 pb-1 border-t border-white/10">
+                <div className="pt-4 pb-1 border-t border-gray-200">
                   {isAuthenticated ? (
                     <div className="space-y-2">
                       <div className="flex items-center px-3">
-                        <div className="w-8 h-8 rounded-full bg-accent-600 text-white flex items-center justify-center font-medium mr-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center font-medium mr-3">
                           {user?.name?.charAt(0) || 'U'}
                         </div>
-                        <div className="text-white">{user?.name || 'User'}</div>
+                        <div className="text-gray-800">{user?.name || 'User'}</div>
                       </div>
-                      <Link href="/account" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                      <Link href="/account" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                         My Account
                       </Link>
-                      <Link href="/orders" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                      <Link href="/orders" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                         My Orders
                       </Link>
                       {isAdmin && (
-                        <Link href="/admin" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                        <Link href="/admin" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                           Admin Panel
                         </Link>
                       )}
                       <button 
                         onClick={handleLogout}
-                        className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors"
+                        className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors"
                       >
                         Logout
                       </button>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Link href="/login" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                      <Link href="/login" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                         Login
                       </Link>
-                      <Link href="/register" className="block px-3 py-2 rounded-md text-base font-medium text-white/80 hover:bg-dark-100 hover:text-accent-400 transition-colors">
+                      <Link href="/register" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                         Register
                       </Link>
                     </div>

@@ -48,8 +48,8 @@ const Layout = ({ children, title = 'CoverMart - Premium iPhone Covers' }) => {
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </Head>
 
-      <div className="flex flex-col min-h-screen bg-black text-white">
-        <div className="fixed inset-0 bg-gradient-radial from-dark-100/20 to-black pointer-events-none z-0"></div>
+      <div className="flex flex-col min-h-screen bg-white text-gray-800">
+        <div className="fixed inset-0 bg-gradient-radial from-gray-50/20 to-white pointer-events-none z-0"></div>
         <Header />
         <main className="flex-grow relative z-10">{children}</main>
         <Footer />

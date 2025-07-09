@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
   return (
-    <footer className="bg-dark-300 text-white border-t border-white/10">
+    <footer className="bg-black text-white border-t border-white/10">
       <div className="container mx-auto px-6 pt-10 pb-6 relative z-10">
         <div className="flex flex-wrap">
           {/* Company Info */}
@@ -14,7 +14,7 @@ const Footer = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-xl font-bold mb-4 font-montserrat bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">CoverMart</h2>
+            <h2 className="text-xl font-bold mb-4 font-montserrat text-white">CoverMart</h2>
             <p className="text-gray-300 text-sm">
               India's premium destination for stylish and protective iPhone covers.
               Find the perfect case that matches your style and keeps your device safe.
@@ -72,7 +72,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4 font-montserrat text-white">Quick Links</h3>
             <ul className="space-y-2">
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -80,7 +80,7 @@ const Footer = () => {
                 </Link>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/products" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/products" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -88,7 +88,7 @@ const Footer = () => {
                 </Link>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/products?category=new" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/products?category=new" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -96,7 +96,7 @@ const Footer = () => {
                 </Link>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/products?category=trending" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/products?category=trending" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -104,7 +104,7 @@ const Footer = () => {
                 </Link>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/cart" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/cart" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -124,7 +124,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4 font-montserrat text-white">Customer Service</h3>
             <ul className="space-y-2">
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/contact" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -132,7 +132,7 @@ const Footer = () => {
                 </Link>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/faqs" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/faqs" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -140,7 +140,7 @@ const Footer = () => {
                 </Link>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
-                <Link href="/shipping" className="text-gray-400 hover:text-accent-400 transition-colors duration-300 flex items-center">
+                <Link href="/shipping" className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center">
                   <svg className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
@@ -181,7 +181,7 @@ const Footer = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <h3 className="text-lg font-semibold mb-4 font-montserrat text-white">Stay Updated</h3>
+            <h3 className="text-lg font-semibold mb-4 font-montserrat text-white">Connect With Us</h3>
             <p className="text-gray-400 text-sm mb-4">
               Subscribe to our newsletter for the latest products, offers, and updates.
             </p>

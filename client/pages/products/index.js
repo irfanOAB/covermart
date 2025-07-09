@@ -5,6 +5,7 @@ import api from '../../utils/api';
 import ProductCard from '../../components/products/ProductCard';
 import Spinner from '../../components/ui/Spinner';
 import { motion } from 'framer-motion';
+import { API_BASE_URL } from '../../utils/constants';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -103,9 +104,9 @@ const ProductsPage = () => {
           // If image is already a full URL, keep it as is
           if (img && img.startsWith('http')) return img;
           // If it starts with /uploads, use the backend URL
-          if (img && img.startsWith('/uploads')) return `http://localhost:5000${img}`;
+          if (img && img.startsWith('/uploads')) return `${API_BASE_URL.replace('/api', '')}${img}`;
           // Otherwise, prefix with the backend uploads path
-          return `http://localhost:5000/uploads/${img}`;
+          return `${API_BASE_URL.replace('/api', '')}/uploads/${img}`;
         }) || []
       }));
       
@@ -141,7 +142,7 @@ const ProductsPage = () => {
         stock: i % 5 === 0 ? 0 : 10 + i,
         featured: i % 7 === 0,
         // Use placeholder images
-        images: [`http://localhost:5000/uploads/product-${i % 5 + 1}.jpg`],
+        images: [`${API_BASE_URL.replace('/api', '')}/uploads/product-${i % 5 + 1}.jpg`],
         colors: ['Black', 'Blue', 'Red']
       });
     }

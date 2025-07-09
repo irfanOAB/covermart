@@ -338,11 +338,50 @@ const getTopProducts = async (req, res) => {
 // @access  Public
 const getFeaturedProducts = async (req, res) => {
   try {
+    // Check if MongoDB is connected
+    if (!isMongoConnected()) {
+      console.log('MongoDB not connected, using mock data for featured products');
+      const mockProducts = getMockProducts();
+      const featured = mockProducts.filter(p => p.isFeatured);
+      return res.json(featured);
+    }
+    
     const products = await Product.find({ isFeatured: true }).limit(8);
     res.json(products);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error in getFeaturedProducts:', error);
+    
+    // Fallback to mock data on error
+    const mockProducts = getMockProducts();
+    const featured = mockProducts.filter(p => p.isFeatured);
+    res.json(featured);
+  }
+};
+
+// @desc    Get new arrival products
+// @route   GET /api/products/new
+// @access  Public
+const getNewProducts = async (req, res) => {
+  try {
+    // Check if MongoDB is connected
+    if (!isMongoConnected()) {
+      console.log('MongoDB not connected, using mock data for new products');
+      const mockProducts = getMockProducts();
+      // For mock data, just return some products as "new"
+      const newProducts = mockProducts.slice(0, 8);
+      return res.json(newProducts);
+    }
+    
+    // If MongoDB is connected, get the newest products by creation date
+    const products = await Product.find({}).sort({ createdAt: -1 }).limit(8);
+    res.json(products);
+  } catch (error) {
+    console.error('Error in getNewProducts:', error);
+    
+    // Fallback to mock data on error
+    const mockProducts = getMockProducts();
+    const newProducts = mockProducts.slice(0, 8);
+    res.json(newProducts);
   }
 };
 
@@ -404,6 +443,7 @@ module.exports = {
   createProductReview,
   getTopProducts,
   getFeaturedProducts,
+  getNewProducts,
   getProductCategories,
   getPhoneModels,
 };

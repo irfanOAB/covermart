@@ -5,6 +5,7 @@ const {
     createProductReview,
     getTopProducts,
     getFeaturedProducts,
+    getNewProducts,
     getProductCategories,
     getPhoneModels,
 } = require('../controllers/productController');
@@ -17,6 +18,7 @@ const router = express.Router();
 router.get('/', getProducts);
 router.get('/top', getTopProducts);
 router.get('/featured', getFeaturedProducts);
+router.get('/new', getNewProducts);
 router.get('/categories', getProductCategories);
 router.get('/models', getPhoneModels);
 router.get('/:id', getProductById);

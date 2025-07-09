@@ -6,6 +6,7 @@ import { useCart } from '../../utils/CartContext';
 import api from '../../utils/api';
 import Spinner from '../../components/ui/Spinner';
 import OptimizedImage from '../../components/ui/OptimizedImage';
+import { API_BASE_URL } from '../../utils/constants';
 
 const ProductDetailPage = () => {
   const router = useRouter();
@@ -36,9 +37,9 @@ const ProductDetailPage = () => {
         phoneModel: 'iPhone 15 Pro Max',
         description: 'A premium quality phone case with military-grade drop protection. Features a sleek design with precise cutouts for all ports and buttons.',
         images: [
-          'http://localhost:5000/uploads/product-1.jpg',
-          'http://localhost:5000/uploads/product-2.jpg',
-          'http://localhost:5000/uploads/product-5.jpg'
+          `${API_BASE_URL.replace('/api', '')}/uploads/product-1.jpg`,
+          `${API_BASE_URL.replace('/api', '')}/uploads/product-2.jpg`,
+          `${API_BASE_URL.replace('/api', '')}/uploads/product-5.jpg`
         ],
         isNew: true,
         isBestSeller: true,
@@ -70,9 +71,9 @@ const ProductDetailPage = () => {
         phoneModel: 'iPhone 15 Pro',
         description: 'Genuine leather wallet case with card slots and premium stitching. Combines style with functionality.',
         images: [
-          'http://localhost:5000/uploads/product-3.jpg',
-          'http://localhost:5000/uploads/product-4.jpg',
-          'http://localhost:5000/uploads/product-6.jpg'
+          `${API_BASE_URL.replace('/api', '')}/uploads/product-3.jpg`,
+          `${API_BASE_URL.replace('/api', '')}/uploads/product-4.jpg`,
+          `${API_BASE_URL.replace('/api', '')}/uploads/product-6.jpg`
         ],
         isNew: false,
         isBestSeller: true,
@@ -109,10 +110,10 @@ const ProductDetailPage = () => {
     if (imageUrl.startsWith('http')) return imageUrl;
     
     // If it starts with /uploads, use the backend URL
-    if (imageUrl.startsWith('/uploads')) return `http://localhost:5000${imageUrl}`;
+    if (imageUrl.startsWith('/uploads')) return `${API_BASE_URL.replace('/api', '')}${imageUrl}`;
     
     // Otherwise, prefix with the backend uploads path
-    return `http://localhost:5000/uploads/${imageUrl}`;
+    return `${API_BASE_URL.replace('/api', '')}/uploads/${imageUrl}`;
   };
 
   // Fetch product data
@@ -236,11 +237,11 @@ const ProductDetailPage = () => {
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumbs */}
         <nav className="flex mb-5 text-sm font-medium">
-          <Link href="/" className="text-gray-400 hover:text-accent-400">
+          <Link href="/" className="text-gray-400 hover:text-white">
             Home
           </Link>
           <span className="mx-2 text-gray-600">/</span>
-          <Link href="/products" className="text-gray-400 hover:text-accent-400">
+          <Link href="/products" className="text-gray-400 hover:text-white">
             Products
           </Link>
           <span className="mx-2 text-gray-600">/</span>
@@ -277,14 +278,12 @@ const ProductDetailPage = () => {
               
               {/* Image Thumbnails */}
               {product.images && product.images.length > 1 && (
-                <div className="flex space-x-2 overflow-x-auto">
+                <div className="grid grid-cols-4 gap-2 mt-2">
                   {product.images.map((image, index) => (
-                    <button
+                    <div
                       key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`relative h-20 w-20 flex-shrink-0 rounded border-2 ${
-                        selectedImage === index ? 'border-accent-500' : 'border-dark-100'
-                      } overflow-hidden bg-dark-200`}
+                      className={`relative h-20 w-full rounded-md overflow-hidden border cursor-pointer ${selectedImage === index ? 'border-white' : 'border-dark-100'}`}
                     >
                       <OptimizedImage
                         src={image}
@@ -294,7 +293,7 @@ const ProductDetailPage = () => {
                         category={product.category}
                         productName={product.name}
                       />
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -304,15 +303,15 @@ const ProductDetailPage = () => {
             <div className="flex flex-col">
               {/* Title and badges */}
               <div className="mb-4">
-                <div className="flex space-x-2">
-                  {product.isNew && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-900 text-green-200">
-                      New
+                <div className="flex items-center space-x-2 mb-2">
+                  {product.isFeatured && (
+                    <span className="px-2 py-1 text-xs font-semibold rounded-md bg-yellow-900 text-yellow-100">
+                      Featured
                     </span>
                   )}
-                  {product.isBestSeller && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-900 text-amber-200">
-                      Best Seller
+                  {product.isNew && (
+                    <span className="px-2 py-1 text-xs font-semibold rounded-md bg-green-900 text-green-100">
+                      New
                     </span>
                   )}
                 </div>
@@ -321,12 +320,12 @@ const ProductDetailPage = () => {
               
               {/* Rating */}
               <div className="flex items-center mb-4">
-                <div className="flex text-accent-400">
+                <div className="flex text-white">
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
-                      className={`h-5 w-5 ${
-                        i < Math.round(product.rating) ? 'text-accent-400' : 'text-dark-100'
+                      className={`h-5 w-5 flex-shrink-0 ${
+                        i < Math.round(product.rating) ? 'text-yellow-500' : 'text-gray-600'
                       }`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
@@ -351,7 +350,7 @@ const ProductDetailPage = () => {
                     <p className="ml-2 text-base line-through text-gray-500">
                       ₹{(product.price || 0).toFixed(2)}
                     </p>
-                    <p className="ml-2 text-sm text-accent-400">
+                    <p className="ml-2 text-sm text-green-500">
                       {Math.round(((product.price - (product.discountPrice || 0)) / product.price) * 100)}% off
                     </p>
                   </div>
@@ -386,9 +385,9 @@ const ProductDetailPage = () => {
               {/* Stock status */}
               <div className="mb-4">
                 {product.countInStock > 0 ? (
-                  <p className="text-accent-400 text-sm font-medium">
-                    In Stock ({product.countInStock} available)
-                  </p>
+                  <p className="text-white text-sm font-medium">
+                  In Stock ({product.countInStock} available)
+                </p>
                 ) : (
                   <p className="text-red-400 text-sm font-medium">Out of Stock</p>
                 )}
@@ -403,7 +402,7 @@ const ProductDetailPage = () => {
                   <div className="flex">
                     <button
                       onClick={decrementQuantity}
-                      className="px-3 py-1 border border-dark-100 bg-dark-100 text-white rounded-l-md focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="px-3 py-1 border border-dark-100 bg-dark-100 text-white rounded-l-md focus:outline-none focus:ring-1 focus:ring-white"
                       disabled={quantity <= 1}
                     >
                       -
@@ -416,11 +415,11 @@ const ProductDetailPage = () => {
                       max={product.countInStock}
                       value={quantity}
                       onChange={handleQuantityChange}
-                      className="w-16 border-t border-b border-dark-100 bg-dark-100 text-white text-center focus:outline-none focus:ring-accent-500 focus:border-accent-500"
+                      className="w-16 border-t border-b border-dark-100 bg-dark-100 text-white text-center focus:outline-none focus:ring-white focus:border-white"
                     />
                     <button
                       onClick={incrementQuantity}
-                      className="px-3 py-1 border border-dark-100 bg-dark-100 text-white rounded-r-md focus:outline-none focus:ring-1 focus:ring-accent-500"
+                      className="px-3 py-1 border border-dark-100 bg-dark-100 text-white rounded-r-md focus:outline-none focus:ring-1 focus:ring-white"
                       disabled={quantity >= product.countInStock}
                     >
                       +
@@ -434,14 +433,14 @@ const ProductDetailPage = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={product.countInStock === 0 || addingToCart}
-                  className="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center px-4 py-3 border border-white rounded-md shadow-sm text-base font-medium text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white disabled:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addingToCart ? <Spinner size="small" color="white" /> : 'Add to Cart'}
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={product.countInStock === 0 || addingToCart}
-                  className="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-accent-500 hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 disabled:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center px-4 py-3 border border-white/50 rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white disabled:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Buy Now
                 </button>
@@ -457,7 +456,7 @@ const ProductDetailPage = () => {
                 product.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <svg
-                      className="h-5 w-5 text-accent-500 mr-2"
+                      className="h-5 w-5 text-white mr-2"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
                       fill="currentColor"

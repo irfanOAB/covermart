@@ -4,26 +4,26 @@
 @tailwind utilities;
 
 /* Google Fonts Import */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* Global styles */
 :root {
-  --primary-color: #0a0a0a;
-  --primary-dark: #050505;
-  --primary-light: #1a1a1a;
-  --accent-color: #6366f1;
-  --accent-dark: #4f46e5;
-  --accent-light: #818cf8;
-  --black: #030303;
+  --primary-color: #000000;
+  --primary-dark: #000000;
+  --primary-light: #212121;
+  --accent-color: #333333;
+  --accent-dark: #1a1a1a;
+  --accent-light: #4d4d4d;
+  --black: #000000;
   --white: #ffffff;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-500: #6b7280;
-  --gray-700: #374151;
-  --gray-900: #111827;
-  --success-color: #22c55e;
-  --error-color: #ef4444;
+  --gray-100: #f5f5f5;
+  --gray-200: #e0e0e0;
+  --gray-300: #cccccc;
+  --gray-500: #8f8f8f;
+  --gray-700: #616161;
+  --gray-900: #212121;
+  --success-color: #2e7d32;
+  --error-color: #c62828;
 }
 
 /* Base styles */
@@ -44,15 +44,15 @@
   }
   
   .btn-primary {
-    @apply bg-accent-600 text-white hover:bg-accent-700 focus:ring-accent-500;
+    @apply bg-black text-white hover:bg-gray-900 focus:ring-gray-800;
   }
   
   .btn-secondary {
-    @apply bg-dark-100 text-white hover:bg-dark-200 border border-dark-100 hover:border-accent-500 focus:ring-accent-500;
+    @apply bg-white text-black hover:bg-gray-100 border border-gray-200 hover:border-gray-300 focus:ring-gray-300;
   }
   
   .btn-outline {
-    @apply border border-white/20 bg-transparent text-white hover:bg-white/10 focus:ring-white;
+    @apply border border-black bg-transparent text-black hover:bg-gray-100 focus:ring-black;
   }
   
   .form-input {

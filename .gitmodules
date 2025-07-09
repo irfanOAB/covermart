@@ -1,0 +1,3 @@
+[submodule "covermart"]
+	path = covermart
+	url = https://github.com/irfanOAB/covermart.git

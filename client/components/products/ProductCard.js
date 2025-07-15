@@ -14,7 +14,7 @@ const ProductCard = ({ product }) => {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product, 1, product.colors && product.colors.length > 0 ? product.colors[0] : '');
+    addToCart(product, 1,);
   };
   
   // Process image URL to ensure it's properly formatted

@@ -65,6 +65,8 @@ export const CartProvider = ({ children }) => {
     try {
       setLoading(true);
 
+      console.log("product", product);
+
       const existingItem = cartItems.find(
         (item) => item.product === product._id
       );
@@ -81,11 +83,7 @@ export const CartProvider = ({ children }) => {
         const newItem = {
           product: product._id,
           name: product.name,
-          image: processImageUrl(
-            product.images && product.images.length > 0
-              ? product.images[0]
-              : '/images/products/placeholder.jpg'
-          ),
+          image: product?.images[0],
           price:
             product.discountPrice > 0 ? product.discountPrice : product.price,
           category: product.category || '',

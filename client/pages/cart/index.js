@@ -10,10 +10,12 @@ const CartPage = () => {
   const { cartItems, updateCartItemQty, removeFromCart, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-  
+
+  console.log(cartItems);
+
   const [updating, setUpdating] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
-  
+
   // Process image URL to ensure it's properly formatted
   const processImageUrl = (imageUrl) => {
     if (!imageUrl) return null;
@@ -32,24 +34,24 @@ const CartPage = () => {
     (acc, item) => acc + (item.quantity || item.qty || 1) * (item.discountPrice || item.price || 0),
     0
   );
-  
+
   // Calculate GST (18%)
   const gst = subtotal * 0.18;
-  
+
   // Calculate shipping (free for orders over ₹499)
   const shipping = subtotal > 499 ? 0 : 49;
-  
+
   // Calculate total
   const total = subtotal + gst + shipping;
 
   const handleQuantityChange = async (item, quantity) => {
     if (quantity < 1 || (item.countInStock && quantity > item.countInStock)) return;
-    
+
     setUpdating(true);
     await updateCartItemQty(item._id || item.product, quantity);
     setUpdating(false);
   };
-  
+
   // Helper function to get the current quantity of an item
   const getItemQuantity = (item) => {
     return item.quantity || item.qty || 1;
@@ -111,7 +113,7 @@ const CartPage = () => {
                   {/* Product Image */}
                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-dark-100 mr-0 sm:mr-6 mb-4 sm:mb-0 mx-auto sm:mx-0 bg-dark-300 relative">
                     <OptimizedImage
-                      src={processImageUrl(item.image)}
+                      src={processImageUrl(item?.image)}
                       alt={item.name}
                       fill
                       className="object-contain object-center"
@@ -132,7 +134,7 @@ const CartPage = () => {
                         <p className="mt-1 text-sm text-gray-400">Model: {item.phoneModel}</p>
                         <p className="mt-1 text-sm text-gray-400">Category: {item.category}</p>
                       </div>
-                      
+
                       <div className="mt-2 sm:mt-0 text-right">
                         <p className="text-base font-medium text-white">
                           ₹{(item.discountPrice || item.price).toFixed(2)}
@@ -241,19 +243,19 @@ const CartPage = () => {
             <div className="lg:col-span-1">
               <div className="bg-dark-200 rounded-lg shadow-lg p-6 border border-dark-100">
                 <h2 className="text-lg font-medium text-white mb-4">Order Summary</h2>
-                
+
                 <div className="flow-root">
                   <dl className="-my-4 text-sm divide-y divide-dark-100">
                     <div className="py-4 flex items-center justify-between">
                       <dt className="text-gray-300">Subtotal</dt>
                       <dd className="font-medium text-white">₹{(subtotal || 0).toFixed(2)}</dd>
                     </div>
-                    
+
                     <div className="py-4 flex items-center justify-between">
                       <dt className="text-gray-300">GST (18%)</dt>
                       <dd className="font-medium text-white">₹{(gst || 0).toFixed(2)}</dd>
                     </div>
-                    
+
                     <div className="py-4 flex items-center justify-between">
                       <dt className="text-gray-300">Shipping</dt>
                       <dd className="font-medium text-white">
@@ -264,14 +266,14 @@ const CartPage = () => {
                         )}
                       </dd>
                     </div>
-                    
+
                     <div className="py-4 flex items-center justify-between">
                       <dt className="text-base font-medium text-white">Order Total</dt>
                       <dd className="text-base font-medium text-accent-400">₹{(total || 0).toFixed(2)}</dd>
                     </div>
                   </dl>
                 </div>
-                
+
                 <div className="mt-6">
                   <button
                     type="button"
@@ -282,7 +284,7 @@ const CartPage = () => {
                     Proceed to Checkout
                   </button>
                 </div>
-                
+
                 {subtotal > 0 && shipping === 0 && (
                   <div className="mt-4 text-center text-sm text-green-500">
                     <svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -291,7 +293,7 @@ const CartPage = () => {
                     Free shipping on orders over ₹499
                   </div>
                 )}
-                
+
                 <div className="mt-6 border-t border-dark-100 pt-4">
                   <h3 className="text-sm font-medium text-white mb-2">Accepted Payment Methods</h3>
                   <div className="flex space-x-2">

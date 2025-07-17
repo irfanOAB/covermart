@@ -41,7 +41,7 @@ export default function Home() {
           api.get('/products/featured'),
           api.get('/products/new')
         ]);
-        
+
         setFeaturedProducts(featuredResponse.data);
         setNewArrivals(newArrivalsResponse.data);
         setLoading(false);
@@ -71,7 +71,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
         <div className="container mx-auto px-4 h-full flex items-center relative z-20">
           <div className="max-w-xl">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -98,7 +98,7 @@ export default function Home() {
       {/* Device Selector Section */}
       <section id="device-selector" className="py-20 bg-white border-b border-gray-200">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -107,8 +107,8 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Find Your Perfect Case</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Select your iPhone model to discover our premium collection of cases designed specifically for your device.</p>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -119,15 +119,15 @@ export default function Home() {
                 <button
                   key={model}
                   onClick={() => setActiveModel(model)}
-                  className={`flex-shrink-0 py-3 px-5 transition-all whitespace-nowrap ${activeModel === model 
-                    ? 'bg-black text-white font-medium' 
+                  className={`flex-shrink-0 py-3 px-5 transition-all whitespace-nowrap ${activeModel === model
+                    ? 'bg-black text-white font-medium'
                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
                 >
                   {model}
                 </button>
               ))}
             </div>
-            
+
             <div className="mt-10 flex flex-col md:flex-row items-center bg-white overflow-hidden border border-gray-200">
               <div className="md:w-1/2 p-8 md:p-12">
                 <h3 className="text-2xl font-bold mb-4 text-black">{activeModel} Cases</h3>
@@ -173,14 +173,14 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-      
+
       {/* Second Hero Section - Product Features */}
       <section className="py-20 bg-black text-white overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Left side - Feature image */}
             <div className="order-2 md:order-1">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
@@ -219,10 +219,10 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            
+
             {/* Right side - Text content */}
             <div className="order-1 md:order-2">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -266,11 +266,11 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Featured Products Section - Clean, Minimal Design */}
       <section id="featured" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -295,7 +295,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {featuredProducts.map((product) => (
                 <motion.div
-                  key={product._id} 
+                  key={product._id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
@@ -304,7 +304,7 @@ export default function Home() {
                   <ProductCard product={product} />
                 </motion.div>
               ))}
-              
+
               {/* Placeholder for testing if no products are returned from API */}
               {featuredProducts.length === 0 && (
                 <>
@@ -338,7 +338,7 @@ export default function Home() {
       {/* Shop by Category Section - Clean, Minimal Design */}
       <section className="py-20 bg-gray-50 border-y border-gray-200">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -348,7 +348,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Shop by Category</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Explore our exclusive collection of premium iPhone cases categorized for your convenience.</p>
           </motion.div>
-          
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Clean, minimal styled category cards */}
             {[
@@ -364,8 +364,8 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Link 
-                  href={`/products?category=${category.slug}`} 
+                <Link
+                  href={`/products?category=${category.slug}`}
                   className="group block w-full h-full relative overflow-hidden border border-gray-200 bg-white"
                 >
                   <div className="aspect-square w-full overflow-hidden">
@@ -400,7 +400,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black bg-opacity-60 z-10"></div>
         <div className="container mx-auto px-4 relative z-20">
           <div className="flex flex-col md:flex-row items-center justify-between">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
@@ -413,7 +413,7 @@ export default function Home() {
                 Explore Collection
               </Link>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -485,9 +485,9 @@ export default function Home() {
           {/* Add a subtle pattern or texture here in production */}
           <div className="absolute inset-0 bg-black mix-blend-multiply"></div>
         </div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -496,10 +496,10 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-5xl font-bold mb-6">Elevate Your iPhone Experience</h2>
             <p className="text-lg md:text-xl mb-10 text-gray-600">Discover our premium collection of exquisitely crafted cases that blend style, protection, and innovation for your iPhone.</p>
-            
+
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Link 
-                href="/products" 
+              <Link
+                href="/products"
                 className="inline-flex items-center justify-center bg-black text-white px-8 py-4 font-medium hover:bg-gray-900 transition-colors"
               >
                 Shop Collection
@@ -507,15 +507,15 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </Link>
-              
-              <Link 
-                href="/about" 
+
+              <Link
+                href="/about"
                 className="inline-flex items-center justify-center border border-black text-black px-8 py-4 font-medium hover:bg-black hover:text-white transition-all"
               >
                 Our Story
               </Link>
             </div>
-            
+
             <div className="mt-12">
               <p className="text-sm text-gray-500">Free shipping • 30-day returns • 1-year warranty</p>
             </div>

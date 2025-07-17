@@ -8,22 +8,22 @@ const OrderConfirmationPage = () => {
   const router = useRouter();
   const { orderId } = router.query;
   const { isAuthenticated } = useAuth();
-  
+
   const [loading, setLoading] = useState(true);
   const [orderDetails, setOrderDetails] = useState(null);
-  
+
   useEffect(() => {
     if (!orderId) return;
-    
+
     // In a real application, we would fetch order details from the API
     // For now, we'll create a mock order
     const fetchOrderDetails = async () => {
       try {
         setLoading(true);
-        
+
         // Mock API call delay
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Mock order details
         const mockOrder = {
           _id: orderId,
@@ -60,7 +60,7 @@ const OrderConfirmationPage = () => {
             }
           ]
         };
-        
+
         setOrderDetails(mockOrder);
         setLoading(false);
       } catch (error) {
@@ -68,17 +68,17 @@ const OrderConfirmationPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchOrderDetails();
   }, [orderId]);
-  
+
   // If not authenticated, redirect to login
   useEffect(() => {
     if (!isAuthenticated && !loading) {
       router.push('/login');
     }
   }, [isAuthenticated, loading]);
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -86,7 +86,7 @@ const OrderConfirmationPage = () => {
       </div>
     );
   }
-  
+
   if (!orderDetails) {
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -100,7 +100,7 @@ const OrderConfirmationPage = () => {
       </div>
     );
   }
-  
+
   // Format date
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -121,7 +121,7 @@ const OrderConfirmationPage = () => {
             <h1 className="text-2xl font-bold text-gray-900">Order Confirmed!</h1>
             <p className="text-green-700 mt-1">Thank you for your purchase.</p>
           </div>
-          
+
           {/* Order Details */}
           <div className="p-6">
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
@@ -133,16 +133,15 @@ const OrderConfirmationPage = () => {
                 View all orders
               </Link>
             </div>
-            
+
             {/* Order Status */}
             <div className="mb-6 pb-6 border-b border-gray-200">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Payment Status</h3>
                   <div className="mt-1 flex items-center">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      orderDetails.isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${orderDetails.isPaid ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
                       {orderDetails.isPaid ? 'Paid' : 'Pending'}
                     </span>
                     {orderDetails.isPaid && (
@@ -150,7 +149,7 @@ const OrderConfirmationPage = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Delivery Status</h3>
                   <div className="mt-1 flex items-center">
@@ -159,14 +158,14 @@ const OrderConfirmationPage = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Payment Method</h3>
                   <p className="mt-1 text-sm text-gray-900">
                     {orderDetails.paymentMethod === 'razorpay' ? 'Online Payment' : 'Cash on Delivery'}
                   </p>
                 </div>
-                
+
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Estimated Delivery</h3>
                   <p className="mt-1 text-sm text-gray-900">
@@ -175,7 +174,7 @@ const OrderConfirmationPage = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Shipping Address */}
             <div className="mb-6 pb-6 border-b border-gray-200">
               <h3 className="text-base font-medium text-gray-900 mb-2">Shipping Address</h3>
@@ -186,7 +185,7 @@ const OrderConfirmationPage = () => {
                 <p>Phone: {orderDetails.shippingAddress.phone}</p>
               </address>
             </div>
-            
+
             {/* Order Items */}
             <div className="mb-6 pb-6 border-b border-gray-200">
               <h3 className="text-base font-medium text-gray-900 mb-4">Order Items</h3>
@@ -210,7 +209,7 @@ const OrderConfirmationPage = () => {
                 ))}
               </ul>
             </div>
-            
+
             {/* Order Summary */}
             <div>
               <h3 className="text-base font-medium text-gray-900 mb-4">Order Summary</h3>
@@ -234,7 +233,7 @@ const OrderConfirmationPage = () => {
               </dl>
             </div>
           </div>
-          
+
           {/* Actions */}
           <div className="p-6 bg-gray-50 flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4">
             <Link href="/" className="inline-flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-purple-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">

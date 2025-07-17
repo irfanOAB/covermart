@@ -36,7 +36,7 @@ const ProductsPage = () => {
       if (query.sort) updatedFilters.sort = query.sort;
       setFilters(updatedFilters);
     }
-    
+
     // Fetch categories and phone models
     const fetchFiltersData = async () => {
       try {
@@ -53,7 +53,7 @@ const ProductsPage = () => {
         setPhoneModels(['iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15', 'iPhone 14 Pro Max']);
       }
     };
-    
+
     fetchFiltersData();
     fetchProducts();
   }, [query]);
@@ -61,7 +61,7 @@ const ProductsPage = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      
+
       // Build query string from filters
       const queryParams = new URLSearchParams();
       if (filters.category) queryParams.append('category', filters.category);
@@ -71,7 +71,7 @@ const ProductsPage = () => {
       if (filters.sort) {
         // Map frontend sort values to backend sort parameters
         let sortParam;
-        switch(filters.sort) {
+        switch (filters.sort) {
           case 'price-low-high':
             sortParam = 'price';
             break;
@@ -91,12 +91,12 @@ const ProductsPage = () => {
       }
 
       const { data } = await api.get(`/products?${queryParams.toString()}`);
-      
+
       // If no data or no products array, handle gracefully
       if (!data || !data.products) {
         throw new Error('Invalid response format from API');
       }
-      
+
       // Process products to ensure image paths are complete
       const processedProducts = data.products.map(product => ({
         ...product,
@@ -109,26 +109,26 @@ const ProductsPage = () => {
           return `${API_BASE_URL.replace('/api', '')}/uploads/${img}`;
         }) || []
       }));
-      
+
       setProducts(processedProducts);
       setLoading(false);
     } catch (err) {
       setError('Failed to load products. Please try again later.');
       setLoading(false);
       console.error('Error fetching products:', err);
-      
+
       // Fallback to mock products if API fails
       console.log('Using mock products as fallback');
       setProducts(getMockProducts());
     }
   };
-  
+
   // Helper function to generate mock products as fallback
   const getMockProducts = () => {
     const mockProducts = [];
     const categories = ['Silicone', 'Leather', 'Transparent', 'Designer'];
     const phoneModels = ['iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15', 'iPhone 14 Pro Max'];
-    
+
     // Create 12 mock products
     for (let i = 1; i <= 12; i++) {
       mockProducts.push({
@@ -146,7 +146,7 @@ const ProductsPage = () => {
         colors: ['Black', 'Blue', 'Red']
       });
     }
-    
+
     return mockProducts;
   };
 
@@ -175,7 +175,7 @@ const ProductsPage = () => {
       maxPrice: '',
       sort: 'newest'
     });
-    
+
     router.push('/products');
   };
 
@@ -187,7 +187,7 @@ const ProductsPage = () => {
     <div className="min-h-screen bg-dark-300 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -211,7 +211,7 @@ const ProductsPage = () => {
 
         <div className="flex flex-col md:flex-row gap-6">
           {/* Filters sidebar - Desktop */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}

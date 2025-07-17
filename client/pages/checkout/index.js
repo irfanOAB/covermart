@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -9,11 +10,20 @@ const CheckoutPage = () => {
   const { cartItems, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  
+
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [error, setError] = useState(null);
-  
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login?redirect=/checkout');
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -25,7 +35,7 @@ const CheckoutPage = () => {
     pincode: '',
     paymentMethod: 'razorpay'
   });
-  
+
   // Calculate totals
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.quantity * item.discountPrice,
@@ -34,13 +44,13 @@ const CheckoutPage = () => {
   const gst = subtotal * 0.18;
   const shipping = subtotal > 499 ? 0 : 49;
   const total = subtotal + gst + shipping;
-  
+
   // Redirect if cart is empty
   useEffect(() => {
     if (cartItems.length === 0 && !orderPlaced) {
       router.push('/cart');
     }
-    
+
     // Pre-fill form with user data if available
     if (user) {
       setFormData({
@@ -64,7 +74,7 @@ const CheckoutPage = () => {
   // Form validation
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.name) errors.name = 'Name is required';
     if (!formData.email) errors.email = 'Email is required';
     if (!formData.phone) errors.phone = 'Phone is required';
@@ -72,24 +82,24 @@ const CheckoutPage = () => {
     if (!formData.city) errors.city = 'City is required';
     if (!formData.state) errors.state = 'State is required';
     if (!formData.pincode) errors.pincode = 'PIN code is required';
-    
+
     return errors;
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setError('Please fill in all required fields.');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       // If payment method is COD, place order directly
       if (formData.paymentMethod === 'cod') {
@@ -114,10 +124,10 @@ const CheckoutPage = () => {
         //   shippingPrice: shipping,
         //   totalPrice: total
         // });
-        
+
         // Mock successful order creation
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         handleOrderSuccess('COD123456');
       } else {
         // For online payments (Razorpay)
@@ -137,10 +147,10 @@ const CheckoutPage = () => {
       // const { data } = await api.post('/payments/razorpay', {
       //   amount: total
       // });
-      
+
       // Mock successful order creation
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const options = {
         key: 'rzp_test_YOUR_KEY_HERE', // Replace with actual key
         amount: total * 100, // Amount in paise
@@ -148,7 +158,7 @@ const CheckoutPage = () => {
         name: 'CoverMart',
         description: 'Payment for your iPhone cover purchase',
         image: '/logo.png',
-        handler: function(response) {
+        handler: function (response) {
           handleOrderSuccess(response.razorpay_payment_id);
         },
         prefill: {
@@ -163,7 +173,7 @@ const CheckoutPage = () => {
           color: '#7c3aed'
         }
       };
-      
+
       // Initialize Razorpay
       const razorpay = new window.Razorpay(options);
       razorpay.open();
@@ -191,12 +201,6 @@ const CheckoutPage = () => {
     );
   }
 
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    router.push('/login?redirect=/checkout');
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -210,13 +214,13 @@ const CheckoutPage = () => {
                 {/* Shipping Information */}
                 <div className="mb-8">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Shipping Information</h2>
-                  
+
                   {error && (
                     <div className="mb-4 bg-red-50 text-red-700 p-3 rounded-md text-sm">
                       {error}
                     </div>
                   )}
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -232,7 +236,7 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                         Email Address *
@@ -247,7 +251,7 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                         Phone Number *
@@ -262,7 +266,7 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                         Address *
@@ -277,7 +281,7 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
                         City *
@@ -292,7 +296,7 @@ const CheckoutPage = () => {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
                         State *
@@ -316,7 +320,7 @@ const CheckoutPage = () => {
                         {/* Add more states as needed */}
                       </select>
                     </div>
-                    
+
                     <div>
                       <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-1">
                         PIN Code *
@@ -333,11 +337,11 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Payment Method */}
                 <div className="mb-8">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h2>
-                  
+
                   <div className="space-y-4">
                     <div className="flex items-center">
                       <input
@@ -353,7 +357,7 @@ const CheckoutPage = () => {
                         Pay Online (Credit/Debit Card, UPI, Netbanking)
                       </label>
                     </div>
-                    
+
                     <div className="flex items-center">
                       <input
                         id="cod"
@@ -370,7 +374,7 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-8">
                   <button
                     type="submit"
@@ -383,12 +387,12 @@ const CheckoutPage = () => {
               </form>
             </div>
           </div>
-          
+
           {/* Order Summary */}
           <div>
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
-              
+
               <div className="flow-root mb-6">
                 <ul className="-my-4 divide-y divide-gray-200">
                   {cartItems.map((item) => (
@@ -400,7 +404,7 @@ const CheckoutPage = () => {
                           className="h-full w-full object-contain object-center"
                         />
                       </div>
-                      
+
                       <div className="ml-4 flex flex-1 flex-col">
                         <div>
                           <div className="flex justify-between text-sm font-medium text-gray-900">
@@ -417,31 +421,31 @@ const CheckoutPage = () => {
                   ))}
                 </ul>
               </div>
-              
+
               <dl className="-my-4 text-sm divide-y divide-gray-200">
                 <div className="py-4 flex items-center justify-between">
                   <dt className="text-gray-600">Subtotal</dt>
                   <dd className="font-medium text-gray-900">₹{subtotal.toFixed(2)}</dd>
                 </div>
-                
+
                 <div className="py-4 flex items-center justify-between">
                   <dt className="text-gray-600">GST (18%)</dt>
                   <dd className="font-medium text-gray-900">₹{gst.toFixed(2)}</dd>
                 </div>
-                
+
                 <div className="py-4 flex items-center justify-between">
                   <dt className="text-gray-600">Shipping</dt>
                   <dd className="font-medium text-gray-900">
                     {shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}
                   </dd>
                 </div>
-                
+
                 <div className="py-4 flex items-center justify-between">
                   <dt className="text-base font-medium text-gray-900">Total</dt>
                   <dd className="text-base font-medium text-gray-900">₹{total.toFixed(2)}</dd>
                 </div>
               </dl>
-              
+
               <div className="mt-6 text-center text-sm text-gray-500">
                 <p>
                   By placing your order, you agree to our{' '}

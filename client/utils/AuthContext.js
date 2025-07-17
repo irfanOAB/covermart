@@ -11,7 +11,7 @@ const processGoogleLogin = async (googleResponse) => {
     // In a real app, you would send this token to your backend
     // For now, we'll create a user object from the Google response
     const { profileObj, tokenId } = googleResponse;
-    
+
     return {
       success: true,
       data: {
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await api.post('/users/login', { email, password });
-      
+
       // Store user data and token in localStorage
       localStorage.setItem('userInfo', JSON.stringify(data));
       setUser(data);
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await api.post('/users/register', userData);
-      
+
       // Store user data and token in localStorage
       localStorage.setItem('userInfo', JSON.stringify(data));
       setUser(data);
@@ -100,11 +100,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await api.put('/users/profile', userData);
-      
+
       const updatedUser = { ...user, ...data };
       localStorage.setItem('userInfo', JSON.stringify(updatedUser));
       setUser(updatedUser);
-      
+
       return { success: true, data };
     } catch (error) {
       return {
@@ -115,18 +115,18 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
-  
+
   // Google login
   const googleLogin = async (googleResponse) => {
     try {
       setLoading(true);
-      
+
       if (!googleResponse) {
         return { success: false, error: 'No Google response received' };
       }
-      
+
       const result = await processGoogleLogin(googleResponse);
-      
+
       if (result.success) {
         localStorage.setItem('userInfo', JSON.stringify(result.data));
         setUser(result.data);
@@ -144,7 +144,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
-  
+
   // Get Google client ID
   const getGoogleClientId = () => GOOGLE_CLIENT_ID;
 

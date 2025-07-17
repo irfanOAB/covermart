@@ -15,7 +15,7 @@ const Header = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { cartItems } = useCart();
   const router = useRouter();
-  
+
   const cartCount = cartItems?.length || 0;
   const isAdmin = user?.role === 'admin';
 
@@ -83,8 +83,8 @@ const Header = () => {
               Trending
             </Link>
             {/* Language Toggle */}
-            <button 
-              onClick={toggleLanguage} 
+            <button
+              onClick={toggleLanguage}
               className="p-2 text-gray-600 hover:text-black transition-colors duration-300"
               aria-label="Toggle Language"
             >
@@ -124,7 +124,7 @@ const Header = () => {
 
             {/* User Menu */}
             <div className="relative user-menu-container">
-              <button 
+              <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="p-2 text-gray-600 hover:text-black transition-colors duration-300 flex items-center"
                 aria-label="User Menu"
@@ -143,7 +143,7 @@ const Header = () => {
               {/* Dropdown menu */}
               <AnimatePresence>
                 {isUserMenuOpen && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -163,8 +163,8 @@ const Header = () => {
                             Admin Panel
                           </Link>
                         )}
-                        <button 
-                          onClick={handleLogout} 
+                        <button
+                          onClick={handleLogout}
                           className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-black"
                         >
                           Logout
@@ -199,9 +199,9 @@ const Header = () => {
                 </span>
               )}
             </Link>
-            
+
             {/* Mobile Search Button */}
-            <button 
+            <button
               onClick={toggleMobileSearch}
               className="p-2 rounded-full border border-white/10 hover:border-accent-500 transition-colors"
             >
@@ -209,7 +209,7 @@ const Header = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </button>
-            
+
             {/* Mobile Menu Button */}
             <div className="mobile-menu-container">
               <motion.button
@@ -248,7 +248,7 @@ const Header = () => {
         {/* Mobile Search Bar */}
         <AnimatePresence>
           {isMobileSearch && (
-            <motion.div 
+            <motion.div
               className="md:hidden py-3 bg-white"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -276,7 +276,7 @@ const Header = () => {
         {/* Mobile Navigation Menu */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
+            <motion.div
               className="md:hidden bg-white border-t border-gray-200"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -296,7 +296,7 @@ const Header = () => {
                 <Link href="/products?category=trending" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors">
                   Trending
                 </Link>
-                
+
                 <div className="pt-4 pb-1 border-t border-gray-200">
                   {isAuthenticated ? (
                     <div className="space-y-2">
@@ -317,7 +317,7 @@ const Header = () => {
                           Admin Panel
                         </Link>
                       )}
-                      <button 
+                      <button
                         onClick={handleLogout}
                         className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black transition-colors"
                       >

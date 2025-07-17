@@ -6,10 +6,10 @@ import { useRouter } from 'next/router';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
-  
+
   // Check if the current page is an admin page
   const isAdminPage = router.pathname.startsWith('/admin');
-  
+
   // Check if the current page requires custom layout
   const getLayout = Component.getLayout || ((page) => page);
 

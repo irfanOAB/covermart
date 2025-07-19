@@ -12,7 +12,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'covermart-backend.onrender.com',
+        hostname: 'https://covermart-backend.duckdns.org',
         pathname: '/uploads/**',
       },
     ],

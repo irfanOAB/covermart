@@ -8,6 +8,9 @@ const {
     getNewProducts,
     getProductCategories,
     getPhoneModels,
+    addProduct,
+    updateProductById,
+    deleteProductById,
 } = require('../controllers/productController');
 const { protect } = require('../middleware/authMiddleware');
 const validate = require('../middleware/validateMiddleware');
@@ -23,6 +26,8 @@ router.get('/categories', getProductCategories);
 router.get('/models', getPhoneModels);
 router.get('/:id', getProductById);
 router.put('/:id', updateProductById);
+router.post('/', addProduct);
+router.delete('/:id', deleteProductById);
 router.post('/:id/reviews', protect, validate(reviewSchema), createProductReview);
 
 module.exports = router;

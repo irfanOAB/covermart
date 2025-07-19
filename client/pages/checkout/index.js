@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import api from '../../utils/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useCart } from '../../utils/CartContext';
@@ -97,59 +98,81 @@ const CheckoutPage = () => {
       return;
     }
 
+    // Check if user is authenticated
+    if (!isAuthenticated || !user) {
+      setError('Please log in to place an order.');
+      router.push('/login?redirect=/checkout');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
+      // Prepare order items data
+      const orderItemsData = cartItems.map(item => ({
+        name: item.name,
+        qty: item.quantity,
+        image: item.image,
+        price: item.discountPrice,
+        product: item._id || item.product
+      }));
+
+      // Prepare order data
+      const orderData = {
+        orderItems: orderItemsData,
+        shippingAddress: {
+          street: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode
+        },
+        paymentMethod: formData.paymentMethod === 'cod' ? 'cash_on_delivery' : 'razorpay',
+        itemsPrice: subtotal,
+        taxPrice: gst,
+        shippingPrice: shipping,
+        totalPrice: total
+      };
+
       // If payment method is COD, place order directly
       if (formData.paymentMethod === 'cod') {
         // API call to create order
-        // const { data } = await api.post('/orders', {
-        //   orderItems: cartItems.map(item => ({
-        //     product: item._id || item.product,
-        //     quantity: item.quantity,
-        //     price: item.discountPrice
-        //   })),
-        //   shippingAddress: {
-        //     name: formData.name,
-        //     address: formData.address,
-        //     city: formData.city,
-        //     state: formData.state,
-        //     pincode: formData.pincode,
-        //     phone: formData.phone
-        //   },
-        //   paymentMethod: 'cod',
-        //   itemsPrice: subtotal,
-        //   taxPrice: gst,
-        //   shippingPrice: shipping,
-        //   totalPrice: total
-        // });
-
-        // Mock successful order creation
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        handleOrderSuccess('COD123456');
+        const response = await api.post('/orders', orderData);
+        
+        if (response && response.data && response.data._id) {
+          handleOrderSuccess(response.data._id);
+        } else {
+          throw new Error('Invalid response from server');
+        }
       } else {
         // For online payments (Razorpay)
-        initiateRazorpayPayment();
+        initiateRazorpayPayment(orderData);
       }
     } catch (err) {
       console.error('Error creating order:', err);
-      setError('Failed to place your order. Please try again.');
+      setError(err.response?.data?.message || 'Failed to place your order. Please try again.');
       setLoading(false);
     }
   };
 
   // Initialize Razorpay payment
-  const initiateRazorpayPayment = async () => {
+  const initiateRazorpayPayment = async (orderData) => {
     try {
+      // First create the order in our database
+      const orderResponse = await api.post('/orders', orderData);
+      
+      if (!orderResponse || !orderResponse.data || !orderResponse.data._id) {
+        throw new Error('Invalid response from server when creating order');
+      }
+      
+      const orderId = orderResponse.data._id;
+      
       // API call to create Razorpay order
-      // const { data } = await api.post('/payments/razorpay', {
-      //   amount: total
+      // In a real application, you would create a Razorpay order here
+      // const { data } = await api.post('/api/payments/razorpay', {
+      //   amount: total,
+      //   orderId: orderId
       // });
-
-      // Mock successful order creation
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       const options = {
         key: 'rzp_test_YOUR_KEY_HERE', // Replace with actual key
@@ -158,8 +181,27 @@ const CheckoutPage = () => {
         name: 'CoverMart',
         description: 'Payment for your iPhone cover purchase',
         image: '/logo.png',
-        handler: function (response) {
-          handleOrderSuccess(response.razorpay_payment_id);
+        order_id: orderResponse.data.orderNumber, // Use our order number as reference
+        handler: async function (response) {
+          try {
+            // Update the order to paid
+            const paymentUpdateResponse = await api.put(`/orders/${orderId}/pay`, {
+              id: response.razorpay_payment_id,
+              status: 'completed',
+              update_time: new Date().toISOString(),
+              email_address: formData.email
+            });
+            
+            if (paymentUpdateResponse && paymentUpdateResponse.data) {
+              handleOrderSuccess(orderId);
+            } else {
+              throw new Error('Failed to update payment status');
+            }
+          } catch (error) {
+            console.error('Error updating payment status:', error);
+            setError('Payment was successful but we could not update your order. Please contact support.');
+            setLoading(false);
+          }
         },
         prefill: {
           name: formData.name,
@@ -167,12 +209,18 @@ const CheckoutPage = () => {
           contact: formData.phone
         },
         notes: {
-          address: formData.address
+          address: formData.address,
+          order_id: orderId
         },
         theme: {
           color: '#7c3aed'
         }
       };
+
+      // Check if Razorpay is loaded
+      if (typeof window.Razorpay === 'undefined') {
+        throw new Error('Razorpay SDK not loaded');
+      }
 
       // Initialize Razorpay
       const razorpay = new window.Razorpay(options);
@@ -180,7 +228,7 @@ const CheckoutPage = () => {
       setLoading(false);
     } catch (err) {
       console.error('Error initializing payment:', err);
-      setError('Failed to initialize payment. Please try again.');
+      setError(err.response?.data?.message || 'Failed to initialize payment. Please try again.');
       setLoading(false);
     }
   };

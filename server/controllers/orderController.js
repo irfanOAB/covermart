@@ -19,6 +19,14 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'No order items' });
     }
 
+    // Verify user is authenticated
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    // Generate order number
+    const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+
     const order = new Order({
       orderItems,
       user: req.user._id,
@@ -28,14 +36,28 @@ const createOrder = async (req, res) => {
       taxPrice,
       shippingPrice,
       totalPrice,
+      orderNumber,
+      // Set isPaid to true if payment method is not COD
+      isPaid: paymentMethod !== 'cash_on_delivery',
+      paidAt: paymentMethod !== 'cash_on_delivery' ? Date.now() : null,
     });
 
     const createdOrder = await order.save();
 
-    res.status(201).json(createdOrder);
+    if (!createdOrder) {
+      return res.status(400).json({ message: 'Order could not be created' });
+    }
+
+    // Return the created order with populated product details
+    const populatedOrder = await Order.findById(createdOrder._id).populate(
+      'user',
+      'name email'
+    );
+
+    res.status(201).json(populatedOrder);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Order creation error:', error);
+    res.status(500).json({ message: 'Failed to create order', error: error.message });
   }
 };
 

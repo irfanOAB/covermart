@@ -1,4 +1,5 @@
 const Product = require('../models/productModel');
+const { productValidator } = require('../validators/productValidator');
 const path = require('path');
 const fs = require('fs');
 
@@ -121,15 +122,15 @@ const getProducts = async (req, res) => {
     if (req.query.minPrice || req.query.maxPrice) {
       // Create a $or condition to check both price and discountPrice
       const priceConditions = [];
-      
+
       if (req.query.minPrice && req.query.maxPrice) {
         // Condition 1: discountPrice exists and is within range
         priceConditions.push({
-          discountPrice: { 
-            $exists: true, 
+          discountPrice: {
+            $exists: true,
             $ne: null,
-            $gte: Number(req.query.minPrice), 
-            $lte: Number(req.query.maxPrice) 
+            $gte: Number(req.query.minPrice),
+            $lte: Number(req.query.maxPrice)
           }
         });
         // Condition 2: discountPrice doesn't exist or is null, but price is within range
@@ -138,18 +139,18 @@ const getProducts = async (req, res) => {
             { discountPrice: { $exists: false } },
             { discountPrice: null }
           ],
-          price: { 
-            $gte: Number(req.query.minPrice), 
-            $lte: Number(req.query.maxPrice) 
+          price: {
+            $gte: Number(req.query.minPrice),
+            $lte: Number(req.query.maxPrice)
           }
         });
       } else if (req.query.minPrice) {
         // Condition 1: discountPrice exists and is >= minPrice
         priceConditions.push({
-          discountPrice: { 
-            $exists: true, 
+          discountPrice: {
+            $exists: true,
             $ne: null,
-            $gte: Number(req.query.minPrice) 
+            $gte: Number(req.query.minPrice)
           }
         });
         // Condition 2: discountPrice doesn't exist or is null, but price is >= minPrice
@@ -163,10 +164,10 @@ const getProducts = async (req, res) => {
       } else if (req.query.maxPrice) {
         // Condition 1: discountPrice exists and is <= maxPrice
         priceConditions.push({
-          discountPrice: { 
-            $exists: true, 
+          discountPrice: {
+            $exists: true,
             $ne: null,
-            $lte: Number(req.query.maxPrice) 
+            $lte: Number(req.query.maxPrice)
           }
         });
         // Condition 2: discountPrice doesn't exist or is null, but price is <= maxPrice
@@ -178,7 +179,7 @@ const getProducts = async (req, res) => {
           price: { $lte: Number(req.query.maxPrice) }
         });
       }
-      
+
       // Add the $or condition to the filter
       filter.$or = priceConditions;
     }
@@ -196,11 +197,11 @@ const getProducts = async (req, res) => {
     // Search keyword
     const keyword = req.query.keyword
       ? {
-          name: {
-            $regex: req.query.keyword,
-            $options: 'i',
-          },
-        }
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
       : {};
 
     // Combine all filters
@@ -244,14 +245,14 @@ const getProductById = async (req, res) => {
       console.log('MongoDB not connected, using mock data for product details');
       const mockProducts = getMockProducts();
       const product = mockProducts.find(p => p._id === req.params.id);
-      
+
       if (product) {
         return res.json(product);
       } else {
         return res.status(404).json({ message: 'Product not found in mock data' });
       }
     }
-    
+
     // If MongoDB is connected, proceed with normal database query
     const product = await Product.findById(req.params.id);
 
@@ -262,11 +263,11 @@ const getProductById = async (req, res) => {
     }
   } catch (error) {
     console.error('Error in getProductById:', error);
-    
+
     // Fallback to mock data on error
     const mockProducts = getMockProducts();
     const product = mockProducts.find(p => p._id === req.params.id);
-    
+
     if (product) {
       res.json(product);
     } else {
@@ -345,12 +346,12 @@ const getFeaturedProducts = async (req, res) => {
       const featured = mockProducts.filter(p => p.isFeatured);
       return res.json(featured);
     }
-    
+
     const products = await Product.find({ isFeatured: true }).limit(8);
     res.json(products);
   } catch (error) {
     console.error('Error in getFeaturedProducts:', error);
-    
+
     // Fallback to mock data on error
     const mockProducts = getMockProducts();
     const featured = mockProducts.filter(p => p.isFeatured);
@@ -371,13 +372,13 @@ const getNewProducts = async (req, res) => {
       const newProducts = mockProducts.slice(0, 8);
       return res.json(newProducts);
     }
-    
+
     // If MongoDB is connected, get the newest products by creation date
     const products = await Product.find({}).sort({ createdAt: -1 }).limit(8);
     res.json(products);
   } catch (error) {
     console.error('Error in getNewProducts:', error);
-    
+
     // Fallback to mock data on error
     const mockProducts = getMockProducts();
     const newProducts = mockProducts.slice(0, 8);
@@ -397,13 +398,13 @@ const getProductCategories = async (req, res) => {
       const categories = [...new Set(mockProducts.map(p => p.category))];
       return res.json(categories);
     }
-    
+
     // If MongoDB is connected, proceed with normal database query
     const categories = await Product.distinct('category');
     res.json(categories);
   } catch (error) {
     console.error('Error in getCategories:', error);
-    
+
     // Fallback to mock data on error
     const mockProducts = getMockProducts();
     const categories = [...new Set(mockProducts.map(p => p.category))];
@@ -423,19 +424,102 @@ const getPhoneModels = async (req, res) => {
       const models = [...new Set(mockProducts.map(p => p.phoneModel))];
       return res.json(models);
     }
-    
+
     // If MongoDB is connected, proceed with normal database query
     const models = await Product.distinct('phoneModel');
     res.json(models);
   } catch (error) {
     console.error('Error in getPhoneModels:', error);
-    
+
     // Fallback to mock data on error
     const mockProducts = getMockProducts();
     const models = [...new Set(mockProducts.map(p => p.phoneModel))];
     res.json(models);
   }
 };
+
+// Add product with validation
+const addProduct = async (req, res) => {
+  try {
+    // Validate request body
+    const { error, value } = productValidator.validate(req.body, { abortEarly: false });
+
+    if (error) {
+      return res.status(400).json({
+        message: 'Validation error',
+        details: error.details.map((d) => d.message)
+      });
+    }
+
+    const newProduct = new Product(value);
+    const savedProduct = await newProduct.save();
+
+    return res.status(201).json({
+      message: 'Product created successfully',
+      product: savedProduct,
+    });
+  } catch (err) {
+    console.error('Error creating product:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Update product with validation
+const updateProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate request body
+    const { error, value } = productValidator.validate(req.body, { abortEarly: false });
+
+    if (error) {
+      return res.status(400).json({
+        message: 'Validation error',
+        details: error.details.map((d) => d.message),
+      });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $set: value },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    return res.status(200).json({
+      message: 'Product updated successfully',
+      product: updatedProduct,
+    });
+  } catch (err) {
+    console.error('Error updating product:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Delete remains same
+const deleteProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    return res.status(200).json({
+      message: 'Product deleted successfully',
+      product: deletedProduct,
+    });
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
 
 module.exports = {
   getProducts,
@@ -446,4 +530,7 @@ module.exports = {
   getNewProducts,
   getProductCategories,
   getPhoneModels,
+  addProduct,
+  updateProductById,
+  deleteProductById,
 };

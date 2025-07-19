@@ -6,7 +6,7 @@ const Product = require('./models/productModel');
 dotenv.config();
 
 // Mock product data
-const products = [
+export const products = [
   {
     name: 'Premium Silicone Case for iPhone 15 Pro Max',
     images: ['product-1.jpg', 'product-2.jpg', 'product-5.jpg'],

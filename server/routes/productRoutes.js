@@ -22,6 +22,7 @@ router.get('/new', getNewProducts);
 router.get('/categories', getProductCategories);
 router.get('/models', getPhoneModels);
 router.get('/:id', getProductById);
+router.put('/:id', updateProductById);
 router.post('/:id/reviews', protect, validate(reviewSchema), createProductReview);
 
 module.exports = router;

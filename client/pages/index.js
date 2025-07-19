@@ -90,7 +90,7 @@ export default function Home() {
                   Customize
                 </Link>
               </div>
-            </motion.di   v>
+            </motion.div>
           </div>
         </div>
       </section>

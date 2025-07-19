@@ -469,8 +469,15 @@ const updateProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    console.log(id, "IDDDD")
+
     // Validate request body
     const { error, value } = productValidator.validate(req.body, { abortEarly: false });
+
+    // Remove root-level _id
+    if (value._id) {
+      delete value._id;
+    }
 
     if (error) {
       return res.status(400).json({
@@ -485,6 +492,8 @@ const updateProductById = async (req, res) => {
       { new: true, runValidators: true }
     );
 
+    console.log(updatedProduct);
+
     if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
@@ -495,6 +504,7 @@ const updateProductById = async (req, res) => {
     });
   } catch (err) {
     console.error('Error updating product:', err);
+    console.log(err, "ERROR")
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

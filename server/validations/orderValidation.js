@@ -20,15 +20,18 @@ const calculateTaxSchema = Joi.object({
 
 const createOrderSchema = Joi.object({
     orderItems: Joi.array().items(Joi.object({
-        productId: Joi.string().required(),
-        quantity: Joi.number().required()
+        name: Joi.string().required(),
+        qty: Joi.number().required(),
+        image: Joi.string().required(),
+        price: Joi.number().required(),
+        product: Joi.string().required()
     })).required(),
 
     shippingAddress: Joi.object({
-        address: Joi.string().required(),
+        street: Joi.string().required(),
         city: Joi.string().required(),
-        postalCode: Joi.string().required(),
-        country: Joi.string().required(),
+        state: Joi.string().required(),
+        pincode: Joi.string().required()
     }).required(),
 
     paymentMethod: Joi.string().required(),

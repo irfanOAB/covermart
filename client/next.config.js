@@ -12,8 +12,14 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'covermart-backend.onrender.com',
+        hostname: 'https://covermart-backend.duckdns.org',
         pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'spsicmjvzjwmxasixggr.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },

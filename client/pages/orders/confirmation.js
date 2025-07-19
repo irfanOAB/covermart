@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../utils/api';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../../utils/AuthContext';
@@ -7,7 +8,7 @@ import Spinner from '../../components/ui/Spinner';
 const OrderConfirmationPage = () => {
   const router = useRouter();
   const { orderId } = router.query;
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [orderDetails, setOrderDetails] = useState(null);
@@ -15,53 +16,22 @@ const OrderConfirmationPage = () => {
   useEffect(() => {
     if (!orderId) return;
 
-    // In a real application, we would fetch order details from the API
-    // For now, we'll create a mock order
+    // Fetch real order details from the API
     const fetchOrderDetails = async () => {
       try {
         setLoading(true);
 
-        // Mock API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Get order details from the API
+        const { data } = await api.get(`/orders/${orderId}`);
 
-        // Mock order details
-        const mockOrder = {
-          _id: orderId,
-          orderNumber: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-          createdAt: new Date().toISOString(),
-          totalPrice: 1299.00,
-          shippingAddress: {
-            name: 'Demo User',
-            address: '123 Main Street',
-            city: 'Mumbai',
-            state: 'Maharashtra',
-            pincode: '400001',
-            phone: '9876543210'
-          },
-          paymentMethod: orderId.startsWith('COD') ? 'cod' : 'razorpay',
-          isPaid: !orderId.startsWith('COD'),
-          paidAt: !orderId.startsWith('COD') ? new Date().toISOString() : null,
-          isDelivered: false,
-          estimatedDeliveryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-          orderItems: [
-            {
-              name: 'Premium Silicone iPhone 15 Pro Cover',
-              image: 'https://via.placeholder.com/300',
-              price: 699.00,
-              quantity: 1,
-              phoneModel: 'iPhone 15 Pro'
-            },
-            {
-              name: 'Transparent Shock Proof Case',
-              image: 'https://via.placeholder.com/300',
-              price: 599.00,
-              quantity: 1,
-              phoneModel: 'iPhone 15'
-            }
-          ]
+        // Add estimated delivery date (5 days from order date)
+        const orderWithEstimatedDelivery = {
+          ...data,
+          orderNumber: data.orderNumber || `ORD-${data._id.substring(0, 6).toUpperCase()}`,
+          estimatedDeliveryDate: new Date(new Date(data.createdAt).getTime() + 5 * 24 * 60 * 60 * 1000).toISOString()
         };
 
-        setOrderDetails(mockOrder);
+        setOrderDetails(orderWithEstimatedDelivery);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching order details:', error);
@@ -179,10 +149,10 @@ const OrderConfirmationPage = () => {
             <div className="mb-6 pb-6 border-b border-gray-200">
               <h3 className="text-base font-medium text-gray-900 mb-2">Shipping Address</h3>
               <address className="not-italic text-sm text-gray-600">
-                <p>{orderDetails.shippingAddress.name}</p>
-                <p>{orderDetails.shippingAddress.address}</p>
+                <p>{user ? user.name : 'User'}</p>
+                <p>{orderDetails.shippingAddress.street}</p>
                 <p>{orderDetails.shippingAddress.city}, {orderDetails.shippingAddress.state} - {orderDetails.shippingAddress.pincode}</p>
-                <p>Phone: {orderDetails.shippingAddress.phone}</p>
+                <p>Phone: {user && user.phone ? user.phone : 'N/A'}</p>
               </address>
             </div>
 
